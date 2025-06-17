@@ -1,0 +1,179 @@
+:root {
+  --bg-light: #f8f9fa;
+  --text-light: #212529;
+  --bg-dark: #0f1116;
+  --text-dark: #f1f1f1;
+  /* --accent: #3d8bfd; */
+  --accent: #275da5;
+  --button: #3d8bfd;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--accent);
+  color: white;
+}
+
+h1,
+h2 {
+  margin: 0.5rem 0;
+}
+
+.import-export {
+  display: flex;
+  gap: 0.5rem;
+}
+
+a {
+  color: #e4312b;
+}
+
+hr {
+  margin: 1rem
+}
+
+main {
+  padding: 1rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.5rem;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.data-table input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+}
+
+button,
+.custom-file-upload {
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: var(--button);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.delete {
+  background-color: red !important;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.total {
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+canvas {
+  margin-top: 1rem;
+  max-width: 100%;
+}
+
+#expenses-chart {
+  height: 500px !important;
+  width: 500px !important;
+}
+
+#custom-tables .custom-table {
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: var(--accent);
+  color: #ffffff;
+  width: 100%;
+  height: fit-content;
+}
+
+.palastine {
+  height: 80px;
+  width: 80px;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flex {
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  #expenses-chart {
+    height: 400px !important;
+    width: 500px !important;
+  }
+}

@@ -1,7 +1,10 @@
 // ========== GLOBAL STATE ==========
 let appData = {
+    income: [],
     expenses: [],
     savings: [],
+    assets: [],
+    debts: [],
     customTables: []
   };
   
@@ -11,8 +14,7 @@ let appData = {
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     loadData();
-    initTable('expenses');
-    initTable('savings');
+    ['income', 'expenses', 'savings', 'assets', 'debts'].forEach(type => initTable(type));
     initCustomTables();
     document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
     document.getElementById('export-json').addEventListener('click', exportJSON);
@@ -38,21 +40,45 @@ let appData = {
   function loadData() {
     const stored = localStorage.getItem('financeAppData');
     if (stored) {
-      appData = JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      appData = {
+        income: parsed.income || [],
+        expenses: parsed.expenses || [],
+        savings: parsed.savings || [],
+        assets: parsed.assets || [],
+        debts: parsed.debts || [],
+        customTables: parsed.customTables || []
+      };
     } else {
-      appData.expenses = [{ description: 'Rent', category: 'Housing', amount: -800 }];
+      appData.income = [{ description: 'Salary', source: 'Work', amount: 2500 }];
+      appData.expenses = [{ description: 'Rent', category: 'Housing', amount: 800 }];
       appData.savings = [{ name: 'Emergency Fund', institution: 'Bank A', amount: 1500 }];
+      appData.assets = [];
+      appData.debts = [];
+      appData.customTables = [];
     }
   }
+  
   
   // ========== TABLE RENDERING ==========
   function initTable(type) {
     const tbody = document.querySelector(`#${type}-table tbody`);
+    if (!tbody) return;
+  
+    // Ensure appData[type] is always an array
+    if (!Array.isArray(appData[type])) {
+      appData[type] = [];
+    }
+  
     tbody.innerHTML = '';
     appData[type].forEach((row, index) => addRow(type, row, index));
     updateTotals(type);
+  
     if (type === 'expenses') drawChart();
+    if (type === 'income' || type === 'expenses') updateRemainingBalance();
+    if (type === 'assets' || type === 'debts') updateNetWorth();
   }
+  
   
   function addRow(type, data = {}, index = null) {
     const table = document.querySelector(`#${type}-table tbody`);
@@ -60,6 +86,8 @@ let appData = {
   
     const columns = type === 'expenses'
       ? ['description', 'category', 'amount']
+      : type === 'income'
+      ? ['description', 'source', 'amount']
       : ['name', 'institution', 'amount'];
   
     columns.forEach(key => {
@@ -67,10 +95,18 @@ let appData = {
       const input = document.createElement('input');
       input.value = data[key] ?? '';
       input.oninput = () => {
-        appData[type][rowIndex][key] = key === 'amount' ? parseFloat(input.value) || 0 : input.value;
+        let value = key === 'amount' ? parseFloat(input.value) || 0 : input.value;
+        if (key === 'amount') {
+          if (type === 'expenses') value = Math.abs(value); // force negative on display
+          if (type === 'income' || type === 'assets') value = Math.max(0, value);
+          if (type === 'debts') value = Math.max(0, value);
+        }
+        appData[type][rowIndex][key] = value;
         saveData();
         updateTotals(type);
         if (type === 'expenses') drawChart();
+        if (type === 'income' || type === 'expenses') updateRemainingBalance();
+        if (type === 'assets' || type === 'debts') updateNetWorth();
       };
       td.appendChild(input);
       row.appendChild(td);
@@ -97,17 +133,26 @@ let appData = {
     document.getElementById(`${type}-total`).textContent = total.toFixed(2);
   }
   
+  function updateRemainingBalance() {
+    const income = appData.income.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+    const expenses = appData.expenses.reduce((sum, r) => sum + (Math.abs(parseFloat(r.amount) || 0)), 0);
+    document.getElementById('remaining-balance').textContent = (income - expenses).toFixed(2);
+  }
+  
+  function updateNetWorth() {
+    const assets = appData.assets.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+    const debts = appData.debts.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+    document.getElementById('net-worth').textContent = (assets - debts).toFixed(2);
+  }
+  
   // ========== CHART ==========
   function drawChart() {
     const ctx = document.getElementById('expenses-chart').getContext('2d');
-    const filtered = appData.expenses.filter(e => parseFloat(e.amount) < 0);
     const grouped = {};
-  
-    filtered.forEach(e => {
+    appData.expenses.forEach(e => {
       const cat = e.category || 'Uncategorized';
-      grouped[cat] = (grouped[cat] || 0) + Math.abs(e.amount);
+      grouped[cat] = (grouped[cat] || 0) + Math.abs(parseFloat(e.amount) || 0);
     });
-  
     const labels = Object.keys(grouped);
     const data = Object.values(grouped);
   
@@ -119,9 +164,7 @@ let appData = {
         datasets: [{ data, backgroundColor: generateColors(labels.length) }]
       },
       options: {
-        plugins: {
-          legend: { position: 'bottom' }
-        }
+        plugins: { legend: { position: 'bottom' } }
       }
     });
   }
@@ -129,9 +172,7 @@ let appData = {
   function generateColors(n) {
     const base = ['#3d8bfd', '#6610f2', '#6f42c1', '#d63384', '#fd7e14', '#20c997'];
     const colors = [];
-    for (let i = 0; i < n; i++) {
-      colors.push(base[i % base.length]);
-    }
+    for (let i = 0; i < n; i++) colors.push(base[i % base.length]);
     return colors;
   }
   
@@ -231,6 +272,13 @@ let appData = {
     a.download = 'finance-app-data.json';
     a.click();
   }
+
+  document.getElementById('delete-data').addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete all saved data? This cannot be undone.')) {
+      localStorage.removeItem('financeAppData');
+      location.reload();
+    }
+  });
   
   function importJSON(event) {
     const file = event.target.files[0];
@@ -238,10 +286,20 @@ let appData = {
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        appData = JSON.parse(e.target.result);
+        const imported = JSON.parse(e.target.result);
+        
+        // Ensure all keys exist
+        appData = {
+          income: imported.income || [],
+          expenses: imported.expenses || [],
+          savings: imported.savings || [],
+          assets: imported.assets || [],
+          debts: imported.debts || [],
+          customTables: imported.customTables || []
+        };
+  
         saveData();
-        initTable('expenses');
-        initTable('savings');
+        ['income', 'expenses', 'savings', 'assets', 'debts'].forEach(initTable);
         initCustomTables();
       } catch (err) {
         alert('Invalid JSON file.');
@@ -249,4 +307,5 @@ let appData = {
     };
     reader.readAsText(file);
   }
+  
   

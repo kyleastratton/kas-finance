@@ -5,134 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Personal Finance App</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/logo.jpg" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo.jpeg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.jpeg">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/logo.jpeg">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --bg-light: #f8f9fa;
-      --text-light: #212529;
-      --bg-dark: #0f1116;
-      --text-dark: #f1f1f1;
-      --accent: #3d8bfd;
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: background 0.3s, color 0.3s;
-    }
-
-    body.dark {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: var(--accent);
-      color: white;
-    }
-
-    h1, h2 {
-      margin: 0.5rem 0;
-    }
-
-    .import-export {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    main {
-      padding: 1rem;
-    }
-
-    section {
-      margin-bottom: 2rem;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 0.5rem;
-    }
-
-    .data-table th, .data-table td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: left;
-    }
-
-    .data-table input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      color: inherit;
-    }
-
-    button {
-      padding: 0.5rem 1rem;
-      margin-top: 0.5rem;
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .total {
-      font-weight: bold;
-    }
-
-    canvas {
-      margin-top: 1rem;
-    }
-
-    .center {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    #expenses-chart {
-        height: 500px !important;
-        width: 500px !important;
-    }
-
-    #custom-tables .custom-table {
-      margin-top: 1rem;
-      border: 1px solid #ccc;
-      padding: 1rem;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .import-export {
-        flex-direction: column;
-        width: 100%;
-      }
-    }
-  </style>
 </head>
 <body>
   <header>
     <h1>Personal Finance Dashboard</h1>
-    <button id="toggle-theme">Toggle Theme</button>
-    <div class="import-export">
-      <input type="file" id="import-json" accept="application/json" />
-      <button id="export-json">Export JSON</button>
-    </div>
   </header>
 
   <main>
-    <!-- Monthly Expenses Section -->
+    <section style="background-color: gray; padding: 0.5rem; width: 100%; border-radius: 0.5rem;">
+        <h2>Settings</h2>
+        <div class="flex">
+            <button id="toggle-theme">Toggle Theme</button>
+        <!-- <div class="import-export"> -->
+            <label class="custom-file-upload">
+                <input type="file"/>
+                Import JSON
+            </label>
+            <button id="export-json">Export JSON</button>
+            <button class="delete" id="delete-data">Clear Data</button>
+        <!-- </div> -->
+        </div>
+    </section>
+
+    <!-- Income Section -->
+    <section id="income-section">
+      <h2>Monthly Income</h2>
+      <table class="data-table" id="income-table">
+        <thead>
+          <tr><th>Description</th><th>Source</th><th>Amount</th><th>Remove</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="addRow('income')">Add Income</button>
+      <p class="total">Total: <span id="income-total">0</span></p>
+    </section>
+
+    <!-- Expenses Section -->
     <section id="expenses-section">
       <h2>Monthly Expenses</h2>
       <table class="data-table" id="expenses-table">
@@ -143,12 +56,13 @@
       </table>
       <button onclick="addRow('expenses')">Add Expense</button>
       <p class="total">Total: <span id="expenses-total">0</span></p>
+      <p class="total">Remaining Balance: <span id="remaining-balance">0</span></p>
       <div class="center">
-        <canvas id="expenses-chart"></canvas>
+        <canvas id="expenses-chart" height="200"></canvas>
       </div>
     </section>
 
-    <!-- Savings Breakdown Section -->
+    <!-- Savings Section -->
     <section id="savings-section">
       <h2>Savings Breakdown</h2>
       <table class="data-table" id="savings-table">
@@ -161,13 +75,52 @@
       <p class="total">Total: <span id="savings-total">0</span></p>
     </section>
 
-    <!-- Custom Tables Section -->
+    <!-- Assets Section -->
+    <section id="assets-section">
+      <h2>Assets</h2>
+      <table class="data-table" id="assets-table">
+        <thead>
+          <tr><th>Name</th><th>Institution</th><th>Amount</th><th>Remove</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="addRow('assets')">Add Asset</button>
+      <p class="total">Total: <span id="assets-total">0</span></p>
+    </section>
+
+    <!-- Debts Section -->
+    <section id="debts-section">
+      <h2>Debts</h2>
+      <table class="data-table" id="debts-table">
+        <thead>
+          <tr><th>Name</th><th>Institution</th><th>Amount</th><th>Remove</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="addRow('debts')">Add Debt</button>
+      <p class="total">Total: <span id="debts-total">0</span></p>
+      <p class="total">Net Worth: <span id="net-worth">0</span></p>
+    </section>
+
+    <!-- Custom Tables -->
     <section id="custom-tables-section">
       <h2>Custom Tables</h2>
       <button onclick="addCustomTable()">Add Custom Table</button>
       <div id="custom-tables"></div>
     </section>
   </main>
+
+  <footer>
+    <div class="footer-image">
+        <img src="./assets/free-palastine.png" class="palastine">
+        <p>Support Palestine <a href="https://donate.redcross.org.uk/appeal/gaza-crisis-appeal?spm=Regular+Giving&gad_source=1&gad_campaignid=21455631489&gbraid=0AAAAAD_j2cAvB7HjAGTYgQsNfOXe6tvRh&gclid=CjwKCAjwpMTCBhA-EiwA_-MsmaQEzGNxzXE_SGnYuw-V0KfjH8V7AFHSz_0B2nXbo78Ecks1TV2RixoCb1oQAvD_BwE">here</a></p>
+    </div>
+    <p></p>
+    <hr>
+    <small>
+        Copyright © 2025 Kyle Stratton. All Rights Reserved.
+    </small>
+  </footer>
 
   <script src="script.js"></script>
 </body>
