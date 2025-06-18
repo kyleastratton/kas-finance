@@ -17,17 +17,17 @@
   </header>
 
   <main>
-    <section style="background-color: gray; padding: 0.5rem; width: 100%; border-radius: 0.5rem;">
-        <h2>Settings</h2>
+    <section style="background-color: var(--accent); padding: 1rem; width: 100%; border-radius: 0.5rem;">
+        <h2 style="color: #f6f8f7">Settings</h2>
         <div class="flex">
-            <button id="toggle-theme">Toggle Theme</button>
+            <button class="primary" id="toggle-theme">Toggle Theme</button>
         <!-- <div class="import-export"> -->
             <label class="custom-file-upload">
                 <input type="file"/>
                 Import JSON
             </label>
-            <button id="export-json">Export JSON</button>
-            <button class="delete" id="delete-data">Clear Data</button>
+            <button class="primary" id="export-json">Export JSON</button>
+            <button class="error" id="delete-data">Clear Data</button>
         <!-- </div> -->
         </div>
     </section>
@@ -41,7 +41,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addRow('income')">Add Income</button>
+      <button class="primary" onclick="addRow('income')">Add Income</button>
       <p class="total">Total: <span id="income-total">0</span></p>
     </section>
 
@@ -54,7 +54,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addRow('expenses')">Add Expense</button>
+      <button class="primary" onclick="addRow('expenses')">Add Expense</button>
       <p class="total">Total: <span id="expenses-total">0</span></p>
       <p class="total">Remaining Balance: <span id="remaining-balance">0</span></p>
       <div class="center">
@@ -71,7 +71,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addRow('savings')">Add Saving</button>
+      <button class="primary" onclick="addRow('savings')">Add Saving</button>
       <p class="total">Total: <span id="savings-total">0</span></p>
     </section>
 
@@ -84,7 +84,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addRow('assets')">Add Asset</button>
+      <button class="primary" onclick="addRow('assets')">Add Asset</button>
       <p class="total">Total: <span id="assets-total">0</span></p>
     </section>
 
@@ -97,7 +97,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addRow('debts')">Add Debt</button>
+      <button class="primary" onclick="addRow('debts')">Add Debt</button>
       <p class="total">Total: <span id="debts-total">0</span></p>
       <p class="total">Net Worth: <span id="net-worth">0</span></p>
     </section>
@@ -105,14 +105,14 @@
     <!-- Custom Tables -->
     <section id="custom-tables-section">
       <h2>Custom Tables</h2>
-      <button onclick="addCustomTable()">Add Custom Table</button>
+      <button class="primary" onclick="addCustomTable()">Add Custom Table</button>
       <div id="custom-tables"></div>
     </section>
   </main>
 
   <footer>
     <div class="footer-image">
-        <img src="./assets/free-palastine.png" class="palastine">
+        <img src="./assets/free-palastine.png" class="palestine">
         <p>Support Palestine <a href="https://donate.redcross.org.uk/appeal/gaza-crisis-appeal?spm=Regular+Giving&gad_source=1&gad_campaignid=21455631489&gbraid=0AAAAAD_j2cAvB7HjAGTYgQsNfOXe6tvRh&gclid=CjwKCAjwpMTCBhA-EiwA_-MsmaQEzGNxzXE_SGnYuw-V0KfjH8V7AFHSz_0B2nXbo78Ecks1TV2RixoCb1oQAvD_BwE">here</a></p>
     </div>
     <p></p>

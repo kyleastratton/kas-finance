@@ -114,6 +114,7 @@ let appData = {
   
     const removeBtn = document.createElement('button');
     removeBtn.textContent = '✖';
+    removeBtn.classList.add("error");
     removeBtn.onclick = () => {
       appData[type].splice(rowIndex, 1);
       saveData();

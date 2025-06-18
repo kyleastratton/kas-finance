@@ -1,10 +1,10 @@
 :root {
   --bg-light: #f8f9fa;
   --text-light: #212529;
-  --bg-dark: #0f1116;
-  --text-dark: #f1f1f1;
+  --bg-dark: #202634;
+  --text-dark: #f6f8f7;
   /* --accent: #3d8bfd; */
-  --accent: #275da5;
+  --accent: #283044;
   --button: #3d8bfd;
 }
 
@@ -103,7 +103,6 @@ button,
 .custom-file-upload {
   padding: 0.5rem 1rem;
   margin-top: 0.5rem;
-  background-color: var(--button);
   color: white;
   border: none;
   border-radius: 4px;
@@ -111,8 +110,12 @@ button,
   font-size: 1rem;
 }
 
-.delete {
-  background-color: red !important;
+.primary, .custom-file-upload {
+  background-color: var(--button);
+}
+
+.error {
+  background-color: #F85149;
 }
 
 button:hover {
@@ -151,9 +154,10 @@ footer {
   height: fit-content;
 }
 
-.palastine {
+.palestine {
   height: 80px;
   width: 80px;
+  border-radius: 0.25rem;
 }
 
 @media (max-width: 600px) {
